@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="/static/CesiumUnminified/Widgets/widgets.css" />
+</head>
+
+<body>
+        <div id="cesiumContainer"></div>
+    <!-- <div id="cesiumContainer"></div> -->
+</body>
+<script src="/static/CesiumUnminified/Cesium.js"></script>
+<!-- <script>
+    var viewer = new Cesium.Viewer('cesiumContainer');
+    var scene = viewer.scene;
+
+    // var tileset = scene.primitives.add(
+    //     new Cesium.Cesium3DTileset({
+    //         url: Cesium.IonResource.fromAssetId(8564)
+    //     })
+    // );
+
+    var tileset = scene.primitives.add(
+        Cesium.Model.fromGltf({  
+         url : '/model/<%=mdid%>/<%=mdid%>.gltf',        //如果为bgltf则为.bgltf     
+        //  modelMatrix : modelMatrix,  
+         scale : 3.0     //放大倍数
+       }));  
+
+
+    tileset.readyPromise.then(function (tileset) {
+        viewer.zoomTo(tileset, new Cesium.HeadingPitchRange(0.5, -0.2, tileset.boundingSphere.radius * 4.0));
+    }).otherwise(function (error) {
+        console.log(error);
+    });
+
+
+    tileset.colorBlendMode = Cesium.Cesium3DTileColorBlendMode.REPLACE;
+</script> -->
+
+
+<script>
+    var url = '/model/<%=mdid%>/<%=mdid%>.gltf';
+    var longitude = 116.433;
+    var latitude = 39.916;
+    var height = 0;
+
+    //set home view
+    Cesium.Camera.DEFAULT_VIEW_RECTANGLE = Cesium.Rectangle.fromDegrees(90, -20, 110, 90);
+
+    var viewer = new Cesium.Viewer('cesiumContainer');
+    var modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(
+        Cesium.Cartesian3.fromDegrees(longitude, latitude, height)
+    );
+    var primitive = viewer.scene.primitives.add(Cesium.Model.fromGltf({
+        url: url,
+        modelMatrix: modelMatrix,
+        scale: 1.0,
+        dequantizeInShader: false,
+        minimumPixelSize: 1.0
+    }));
+    
+    primitive.readyPromise.then(function(model){
+        var center = new Cesium.Cartesian3();
+        Cesium.Matrix4.multiplyByPoint(model.modelMatrix, model.boundingSphere.center, center);
+        var boundingSphere = new Cesium.BoundingSphere(center, model.boundingSphere.radius * 1.5);			
+        
+        viewer.camera.flyToBoundingSphere(boundingSphere);
+    });
+    
+    var selectedEntity = new Cesium.Entity();
+    var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+    handler.setInputAction(
+        function (movement) {
+            var pick = viewer.scene.pick(movement.position);
+            if (Cesium.defined(pick) && Cesium.defined(pick.node) && Cesium.defined(pick.mesh)) {
+                var node = primitive.gltf.nodes[pick.node.id];
+                selectedEntity.name = node.name || "<null>";
+                selectedEntity.description = 'Loading <div class="cesium-infoBox-loading"></div>';
+                viewer.selectedEntity = selectedEntity;
+                if(node.extras){
+                    selectedEntity.description = '<table class="cesium-infoBox-defaultTable"><tbody>' +
+                        '<tr><th>DbId</th><td>' + node.extras.DbId + '</td></tr>' +
+                        '<tr><th>ExId</th><td>' + node.extras.ExId + '</td></tr>' +
+                        '</tbody></table>';
+                }else{
+                    selectedEntity.description = '<table class="cesium-infoBox-defaultTable"><tbody>' +
+                        '</tbody></table>';
+                }
+            }
+        },
+        Cesium.ScreenSpaceEventType.LEFT_CLICK
+    );
+
+</script>
+</html>

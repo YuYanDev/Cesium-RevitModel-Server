@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="./styles/index.css" />
+</head>
+
+<body>
+    <center>
+        <h1>Cesium 测试</h1>
+    </center>
+    <hr/>
+    <br />
+    <center>
+        <div id="cesiumframe"></div>
+    </center>
+    <br />
+    <hr />
+    <div>
+        <div>
+            <form id="form1">
+                <table border="0">
+                    <tr>
+                        <td>
+                            模型id：
+                        </td>
+                        <td>
+                            <input type="text" id='model' model="model" />
+                        </td>
+                        <td>
+                            <a id='setbutton'>提交</a>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <br />
+        <div id="modellist">
+        </div>
+    </div>
+</body>
+<script>
+    /** 
+     * 以iframe的形式加载模型 函数封装方便调用
+    */
+    function loadcesium(modelid, init) {
+        document.getElementById('cesiumframe').innerHTML = null
+        var cesiumiframe = document.createElement('iframe');
+        cesiumiframe.src = "/model/" + modelid;
+
+        cesiumiframe.style.width = "640px";
+        cesiumiframe.style.height = "340px";
+        document.getElementById('cesiumframe').appendChild(cesiumiframe);
+    }
+
+    function fn() {
+        loadcesium(document.getElementById("model").value)
+    }
+
+    /** 
+     * 增加模型时就直接刷列表懒得手写了
+    */
+    function loadModelList(modellist){
+        document.getElementById('modellist').innerHTML = null
+        var html =''
+        modellist.map(function(item){
+            html = html + '<tr><td>'+item.modelname+'</td><td>'+item.modelid+'</td></tr>'
+        })
+        var tableTmpl ='<table border="1"><thead><tr><td>模型名称：</td><td>对应id：</td></tr></thead><tbody>'+html+'</tbody></table>'
+        document.getElementById('modellist').innerHTML = tableTmpl;
+    }
+
+    /** 
+     * 初始化
+    */
+    var modellist = [{modelname:'泾河桥',modelid:'jhq'},{modelname:'光谷桥',modelid:'ggq'}]
+    loadModelList(modellist)
+
+    /** 
+     * 监听刷新模型
+    */
+    document.getElementById('setbutton').addEventListener("click", fn, false);
+</script>
+
+</html>
