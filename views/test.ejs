@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>test read</title>
+</head>
+<body>
+    <script src="/static/gltftestreader.js"></script>
+    <script>
+        let uri = "/model/qiangTest/qiangTest_data_000.bin";
+
+        gltfUtilities.loadArrayBuffer(uri,
+            function(buf) {
+                let idx = new DataView(buf, 0, 16);
+                for (var i = 0; i < 16; i += 2) {
+                    window.console.log(idx.getUint16(i, true));
+                }
+                window.console.log('\n\n\n');
+                let vtx = new DataView(buf, 16, 48);
+                for (var v = 0; v < 48; v += 4) {
+                    window.console.log(vtx.getFloat32(v, true));
+                }
+            },
+            function(xhr) {
+                window.console.log("The ArrayBuffer failed to load");
+            }
+        );
+    </script>
+</body>
+</html>

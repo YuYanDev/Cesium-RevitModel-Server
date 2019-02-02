@@ -63,3 +63,5 @@ typings/
 upload-single/
 
 public/model/
+
+public/static/three.js

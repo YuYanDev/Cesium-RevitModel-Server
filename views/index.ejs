@@ -5,8 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-    <link rel="stylesheet" href="./styles/index.css" />
+    <title>Cesium 测试</title>
 </head>
 
 <body>
@@ -44,22 +43,7 @@
     </div>
 </body>
 <script>
-    /** 
-     * 以iframe的形式加载模型 函数封装方便调用
-    */
-    function loadcesium(modelid, init) {
-        document.getElementById('cesiumframe').innerHTML = null
-        var cesiumiframe = document.createElement('iframe');
-        cesiumiframe.src = "/model/" + modelid;
-
-        cesiumiframe.style.width = "640px";
-        cesiumiframe.style.height = "340px";
-        document.getElementById('cesiumframe').appendChild(cesiumiframe);
-    }
-
-    function fn() {
-        loadcesium(document.getElementById("model").value)
-    }
+    
 
     /** 
      * 增加模型时就直接刷列表懒得手写了
@@ -68,17 +52,43 @@
         document.getElementById('modellist').innerHTML = null
         var html =''
         modellist.map(function(item){
-            html = html + '<tr><td>'+item.modelname+'</td><td>'+item.modelid+'</td></tr>'
+            html = html + '<tr><td>'+item.modelname+'</td><td>'+item.modelid+'</td><td>'+item.ex+'</td></tr>'
         })
-        var tableTmpl ='<table border="1"><thead><tr><td>模型名称：</td><td>对应id：</td></tr></thead><tbody>'+html+'</tbody></table>'
+        var tableTmpl ='<table border="1"><thead><tr><td>模型名称：</td><td>对应id：</td><td>备注：</td></tr></thead><tbody>'+html+'</tbody></table>'
         document.getElementById('modellist').innerHTML = tableTmpl;
     }
 
     /** 
      * 初始化
+     * 
     */
-    var modellist = [{modelname:'泾河桥',modelid:'jhq'},{modelname:'光谷桥',modelid:'ggq'}]
+    var modellist = [
+        {modelname:'泾河桥-自动质量-启用压缩-剔除外壳',modelid:'JHQAutoQualityWithDracoExtractionShell',ex:'无法运行'},
+        {modelname:'泾河桥-自动质量-不启用压缩-不剔除外壳',modelid:'JHQAutoQualityNoDracoNoExtractionShell',ex:'默认'},
+        {modelname:'泾河桥-自动质量-不启用压缩-剔除外壳',modelid:'JHQAutoQualityNoDracoWithExtractionShell',ex:''},
+        {modelname:'泾河桥-自动质量-不启用压缩-不剔除外壳-剔除点线',modelid:'JHQAutoQualityNoDracoNoExtractionShellExtractionLinePoint',ex:''},
+        {modelname:'泾河桥-低质量-不启用压缩-不剔除外壳',modelid:'JHQLowQualityNoDracoNoExtractionShell',ex:'画质3'},
+        {modelname:'泾河桥-最低质量-不启用压缩-不剔除外壳',modelid:'JHQLowestQualityNoDracoNoExtractionShell',ex:'画质0'},
+    ]
     loadModelList(modellist)
+
+    /** 
+     * 以iframe的形式加载模型 函数封装方便调用
+    */
+    function loadcesium(modelid, init) {
+        document.getElementById('cesiumframe').innerHTML = null
+        var cesiumiframe = document.createElement('iframe');
+        cesiumiframe.src = "/model/" + modelid;
+
+        cesiumiframe.style.width = "960px";
+        cesiumiframe.style.height = "510px";
+        document.getElementById('cesiumframe').appendChild(cesiumiframe);
+    }
+
+    function fn() {
+        loadcesium(document.getElementById("model").value)
+        document.getElementById("model").value = ''
+    }
 
     /** 
      * 监听刷新模型

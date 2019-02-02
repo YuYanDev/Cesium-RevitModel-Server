@@ -5,7 +5,10 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var indexRouter = require('./router/index');
-var modelRouter = require('./router/model')
+var modelRouter = require('./router/model');
+var threeTileRouter = require('./router/tile');
+var threejsGltfReader = require('./router/three');
+var testRouter = require('./router/test');
 var app = express();
 
 // view engine setup
@@ -20,6 +23,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/model', modelRouter);
+app.use('/3dtiles',threeTileRouter);
+app.use('/threejs',threejsGltfReader);
+app.use('/test',testRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

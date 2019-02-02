@@ -43,10 +43,13 @@
 
 
 <script>
-    var url = '/model/<%=mdid%>/<%=mdid%>.gltf';
+    
+    var url = '/model/<%=mdid%>/<%=mdid%>.glb';
     var longitude = 116.433;
     var latitude = 39.916;
     var height = 0;
+
+    console.log("load: "+url)
 
     //set home view
     Cesium.Camera.DEFAULT_VIEW_RECTANGLE = Cesium.Rectangle.fromDegrees(90, -20, 110, 90);
@@ -95,5 +98,6 @@
         Cesium.ScreenSpaceEventType.LEFT_CLICK
     );
 
+    
 </script>
 </html>
